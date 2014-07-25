@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="con" path="org.robovm.eclipse.ROBOVM_CONTAINER"/>
+	<classpathentry exported="true" kind="con" path="org.robovm.eclipse.ROBOVM_COCOA_TOUCH_CONTAINER"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/snappy-frog"/>
+	<classpathentry exported="true" kind="lib" path="libs/gdx-backend-robovm.jar"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/admob-ios"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
