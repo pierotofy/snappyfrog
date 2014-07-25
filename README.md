@@ -1,7 +1,7 @@
 Snappy Frog
 ==========
 
-This is the source code of Snappy Frog, a libgdx game that has been ported to the Desktop, Android, iOS, OUYA, Amazon Fire and it's also playable on a web browser.
+This is the source code of Snappy Frog, a libgdx game for the Desktop, Android, iOS, OUYA, Amazon Fire. It's also playable on a web browser.
 
 ![alt tag](http://playsnappyfrog.com/img/screenshots/280x187/1.png)    ![alt tag](http://playsnappyfrog.com/img/screenshots/280x187/2.png) ![alt tag](http://playsnappyfrog.com/img/screenshots/280x187/3.png)
 
