@@ -4,19 +4,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.revmob.RevMob;
-import com.revmob.RevMobAdsListener;
-import com.revmob.RevMobTestingMode;
-import com.revmob.ads.banner.RevMobBanner;
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
 
 public class MainActivity extends AndroidApplication {
 	public static AndroidApplication app; // Singleton
-	RevMobBanner banner;
 	
     @SuppressWarnings("deprecation")
 	@Override
@@ -37,33 +34,23 @@ public class MainActivity extends AndroidApplication {
         AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
         View gameView = initializeForView(new Game(new AndroidServices()), cfg);
 
-        // Create and setup the AdMob view
-        RevMob revmob = RevMob.start(this);
-        //revmob.setTestingMode(RevMobTestingMode.WITH_ADS); // with this line, RevMob will always deliver a sample ad
-        //revmob.setTestingMode(RevMobTestingMode.WITHOUT_ADS); // with this line, RevMob will not delivery ads
-        
-        banner = revmob.createBanner(this);
-       
 
+        // Create and setup the AdMob view
+        AdView adView = new AdView(this, AdSize.SMART_BANNER, "ca-app-pub-3144450577280402/6068522170"); // Put in your secret key here
+        adView.loadAd(new AdRequest());
+        
         // Add the libgdx view
         layout.addView(gameView);
 
         // Add the revmob view
         RelativeLayout.LayoutParams adParams = 
-            new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, 
-            		80);
+                new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, 
+                        RelativeLayout.LayoutParams.WRAP_CONTENT);
         
         adParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         adParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         
-        /*
-        LinearLayout bannerLayout = new LinearLayout(this);
-        bannerLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        bannerLayout.setVisibility(View.GONE);
-        bannerLayout.addView(banner);*/
-        
-        
-        layout.addView(banner, adParams);
+        layout.addView(adView, adParams);
 
         // Hook it all up
         setContentView(layout);

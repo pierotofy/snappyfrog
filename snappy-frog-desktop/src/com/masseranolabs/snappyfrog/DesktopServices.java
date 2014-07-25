@@ -1,7 +1,13 @@
 package com.masseranolabs.snappyfrog;
 
-public class DesktopServices implements PlatformServices {
+import com.badlogic.gdx.Gdx;
 
+public class DesktopServices implements PlatformServices {
+	
+	public DesktopServices(){
+
+	}
+	
 	@Override
 	public boolean isSharingAvailable() {
 		return false;
@@ -21,4 +27,17 @@ public class DesktopServices implements PlatformServices {
 	public boolean delayHint() {
 		return false;
 	}
+	
+	@Override
+	public boolean supportsFreetype() {
+		return true;
+	}
+	
+	@Override
+	public boolean isGamePadButtonPressed() {
+		return false;
+	}
+	
+	@Override
+	public void initGamePadControllers() {}
 }

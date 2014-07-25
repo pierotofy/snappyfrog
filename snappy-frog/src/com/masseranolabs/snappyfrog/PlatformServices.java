@@ -5,4 +5,7 @@ public interface PlatformServices {
 	boolean shareCurrentScreen();
 	boolean delayHint();
 	boolean willResumeAfterShare();
+	boolean supportsFreetype();
+	boolean isGamePadButtonPressed();
+	void initGamePadControllers();
 }

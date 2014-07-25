@@ -97,6 +97,8 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
 	public void create() {
 		singleton = this;
 		
+		platformServices.initGamePadControllers();
+		
 		// Get width, height
 		Game.width = Gdx.graphics.getWidth();
 		Game.height = Gdx.graphics.getHeight();
@@ -110,11 +112,17 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
 		skin = new Skin();
 		skin.addRegions(textureAtlas);
 		
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("slkscr.ttf"));
-		buttonFont = generator.generateFont((int)ResHelper.LinearHeightValue(18));
-		scoreFont = generator.generateFont((int)ResHelper.LinearHeightValue(14));
-		hintFont = generator.generateFont((int)ResHelper.LinearHeightValue(12));		
-		generator.dispose();
+		if (platformServices.supportsFreetype()){
+			FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("slkscr.ttf"));
+			buttonFont = generator.generateFont((int)ResHelper.LinearHeightValue(18));
+			scoreFont = generator.generateFont((int)ResHelper.LinearHeightValue(14));
+			hintFont = generator.generateFont((int)ResHelper.LinearHeightValue(12));	
+			generator.dispose();
+		}else{
+			buttonFont = new BitmapFont(Gdx.files.internal("prerenderedFonts/buttonFont.fnt"));
+			scoreFont = new BitmapFont(Gdx.files.internal("prerenderedFonts/scoreFont.fnt"));
+			hintFont = new BitmapFont(Gdx.files.internal("prerenderedFonts/hintFont.fnt"));			
+		}
 		
 		plusOneSound = Gdx.audio.newSound(Gdx.files.internal("sounds/plusOne.wav"));
 		crashSound = Gdx.audio.newSound(Gdx.files.internal("sounds/crash.wav"));
@@ -149,6 +157,7 @@ public class Game extends com.badlogic.gdx.Game implements ApplicationListener {
 		}else{
 			return TimeOfDay.Morning;
 		}
+		//return TimeOfDay.Day;
 	}
 	
 	public static String getTimeBasedTextureName(String name){

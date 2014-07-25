@@ -114,7 +114,7 @@ public class Frog extends Actor {
 	public void act(float delta) {
 		super.act(delta);
 		
-		if (!parent.paused){		
+		if (!LevelScreen.paused){		
 			if (jumping){
 				float newVelocity = jumpingVelocity - Game.GRAVITY * delta;
 				float distanceToMoveY = newVelocity * delta;

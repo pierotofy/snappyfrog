@@ -8,6 +8,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.rotateBy;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Interpolation;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -78,6 +80,7 @@ public class LevelScreen extends StagedScreen {
 	private boolean miniGameStarted;
 	private boolean miniGameDone;
 	private boolean userInitiatedShare;
+	private boolean topDialogDisplayed;
 	
 	// Mini game stuff
 	private Image bigG;
@@ -100,7 +103,7 @@ public class LevelScreen extends StagedScreen {
     private final int MAX_SALARIES_COUNT = 200;
 	private final int SECRET_COLUMN = Game.getPreferences().getInteger("secret_column");
     
-	public boolean paused;
+	public static boolean paused;
 	public static float groundHeightLine; // for faster checks
 	public static Obstacle collisionObstacle;
 	public static boolean miniGame;
@@ -115,6 +118,7 @@ public class LevelScreen extends StagedScreen {
 		userInitiatedShare = false;
 		gameOver = false;
 		miniGame = false;
+		topDialogDisplayed = false;
 		miniGameStarted = miniGameDone = miniGameStartReleasingSalaries = false;
 		lastShootTime = 0;
 		lastSalaryCreatedTime = 0;
@@ -212,6 +216,7 @@ public class LevelScreen extends StagedScreen {
 					Game.getSingleton().setScreen(new LevelScreen(false));		
 				}
 			});
+
 			
 			// High score
 			LabelStyle labelStyle = new LabelStyle();
@@ -242,12 +247,13 @@ public class LevelScreen extends StagedScreen {
 			powerBar = new PowerBar();
 			powerBar.setScale(ResHelper.LinearHeightValue(1.0f));
 			powerBar.setPosition(ResHelper.LinearWidthValue(10), Game.getHeight() - powerBar.getHeight() * powerBar.getScaleY() - ResHelper.LinearHeightValue(10));
+			// OUYA: powerBar.setPosition(ResHelper.LinearWidthValue(28), Game.getHeight() - powerBar.getHeight() * powerBar.getScaleY() - ResHelper.LinearHeightValue(20));
 			
 			LabelStyle labelStyle = new LabelStyle();
 			labelStyle.font = Game.getScoreFont();
 			scoreLabel = new Label("", labelStyle);
 			scoreLabel.setPosition(powerBar.getX() + powerBar.getWidth() * powerBar.getScaleX() + ResHelper.LinearWidthValue(10), 
-					Game.getHeight() - ResHelper.LinearHeightValue(15.0f));
+					Game.getHeight() - ResHelper.LinearHeightValue(15.0f)); // 25.0f OUYA
 			updateScoreLabel();
 			
 			if (tutorial){
@@ -426,11 +432,16 @@ public class LevelScreen extends StagedScreen {
 //		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)){
 //			ScreenshotFactory.saveScreenshot("c:\\users\\piero\\desktop\\screens\\", true);
 //		}
-				
+		
+		if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
+			Gdx.app.exit();
+		}
+
+		
 		if (!gameOver){
 			if (!mainMenu){
 				// Handle input
-				if (Gdx.input.isTouched()){
+				if (Gdx.input.isTouched() || Gdx.input.isKeyPressed(Input.Keys.SPACE) || Game.getPlatformServices().isGamePadButtonPressed()){
 					// Touch and hold
 					if (!holdingTouch){
 						onTouchHold();
@@ -444,7 +455,11 @@ public class LevelScreen extends StagedScreen {
 						holdingTouch = false;
 					}
 				}
+			}else{
+				// Main menu, check new game start with game pads
+				gamePadNewGameCheck();
 			}
+			
 			
 			if (!paused){
 				if (!miniGameStarted){
@@ -599,6 +614,7 @@ public class LevelScreen extends StagedScreen {
 								if (!frog.isJumping()){
 									if (!holdingTouch){
 										frog.jump(0);
+										secondJumpActivated = false;
 									}else{
 										// Player is holding down, meaning he probably wanted to jump
 										onTouchRelease();
@@ -609,6 +625,27 @@ public class LevelScreen extends StagedScreen {
 						}
 					}
 				}
+			}
+		}else{
+			// Game over, see if gamepad is touched for new game
+			if (topDialogDisplayed){
+				gamePadNewGameCheck();
+			}
+		}
+	}
+	
+	public void gamePadNewGameCheck(){
+		if (Game.getPlatformServices().isGamePadButtonPressed()){
+			// Touch and hold
+			if (!holdingTouch){
+				holdingTouch = true;
+			}
+		}else{
+			// Release
+			if (holdingTouch){
+				// Start new game
+				Game.getSingleton().setScreen(new LevelScreen(false));
+				holdingTouch = false;
 			}
 		}
 	}
@@ -847,7 +884,16 @@ public class LevelScreen extends StagedScreen {
 			topDialog.moveBy(0, Game.getHeight());			
 			stage.addActor(topDialog);
 			
-			topDialog.addAction(moveBy(0, -Game.getHeight(), 0.25f, Interpolation.circleOut));
+			topDialog.addAction(sequence(
+									moveBy(0, -Game.getHeight(), 0.25f, Interpolation.circleOut),
+									Actions.after(new Action(){
+										@Override
+										public boolean act(float delta) {
+											topDialogDisplayed = true;
+											return true;
+										}
+									})
+								));
 			
 			
 			// Beated high score?

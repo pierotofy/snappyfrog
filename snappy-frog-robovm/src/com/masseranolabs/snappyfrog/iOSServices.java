@@ -46,5 +46,18 @@ public class iOSServices implements PlatformServices {
 	public boolean delayHint() {
 		return false;
 	}
+	
+	@Override
+	public boolean supportsFreetype() {
+		return true;
+	}
+	
+	@Override
+	public boolean isGamePadButtonPressed() {
+		return false;
+	}
+	
+	@Override
+	public void initGamePadControllers() {}
 }
 
