@@ -13,3 +13,9 @@ To play online visit: http://playsnappyfrog.com/
 
 To compile the sources you will need to follow the instructions provided in the libgdx documentation: https://github.com/libgdx/libgdx/wiki/Setting-up-your-Development-Environment-%28Eclipse%2C-Intellij-IDEA%2C-NetBeans%29
 
+
+## License ##
+
+This software is distributed under the Apache License 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
+
+Admob, libgdx and all other dependencies are distributed under their respective licenses and are owned by their respective owners.
